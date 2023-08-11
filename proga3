@@ -61,45 +61,47 @@ class Notebok { // создаем объект Notebok
                         "объем оперативной памяти: %d Гб \n " +
                         "объем накопителя % d Гб \n " +
                         "ОС %s \n " +
-                        "Диагональ %1f \n " +
-                        "Цена, руб.  %d \n", this.model, this.ram, this.hdd, this.os, this.diag, this.price);
+                        "Диагональ %.1f \n " +
+                        "Цена, руб.  %d \n" +
+                        "Цвет корпуса %s\n", this.model, this.ram, this.hdd, this.os, this.diag, this.price, this.color);
     }
 }
 
 class App {
     public static void main(String[] args) {
-        Set<Notebok> noteboks = new HashSet<>();// todo сделать чтоб ноуты добалены были + сделать выод
-        // public Notebok(String model, int ram, int hdd, String os, String color, double diag, int price) 
-        noteboks.add(new Notebok("Модель1", 8, 512, "Windows", "Черный"));
-        noteboks.add(new Notebok("Модель2", 16, 1024, "Linux", "Серебряный"));
-        noteboks.add(new Notebok("Lenovo", 8, 500, "Windows 11", "Черный", 15.6, 40000);
+        Set<Notebok> noteboks = new HashSet<>();
+        // public Notebok(String model, int ram, int hdd, String os, String color, double diag, int price)
+        noteboks.add(new Notebok("DNS", 8, 512, "Windows 10", "Черный", 15.6, 30000));
+        noteboks.add(new Notebok("DNS", 4, 512, "Linux", "Серебряный", 15, 35000));
+        noteboks.add(new Notebok("Lenovo", 8, 500, "Windows 11", "Черный", 15.6, 40000));
+        noteboks.add(new Notebok("Acer", 4, 250, "Windows 11", "Черный", 11, 35000));
+        noteboks.add(new Notebok("Honor", 16, 512, "Windows 11", "Черный", 16.1, 55000));
+        noteboks.add(new Notebok("Apple", 32, 1024, "MacOS", "Черный", 13.3, 100000));
+        noteboks.add(new Notebok("HP", 16, 1024, "Windows 11", "Белый", 15.6, 40000));
+        noteboks.add(new Notebok("Xiomi", 16, 2048, "Linux", "Черный", 17, 70000));
 
-        Notebook notebook2 = new Notebook("Acer", 4, 250, "Intel", "Windows 10", 11, 35000);
-        Notebook notebook3 = new Notebook("Honor", 16, 512, "AMD", "Ubuntu", 16.1, 55000);
-        Notebook notebook4 = new Notebook("Apple", 32, 1024, "M1", "MacOs", 13.3, 100000);
-        Notebook notebook5 = new Notebook("HP", 16, 1024, "Intel", "nonOS", 15.6, 40000);
-        Notebook notebook6 = new Notebook("XiomiRedmiBook", 16, 2048, "AMD", "Windows 11", 17, 70000);
 
 
-        // Добавьте еще ноутбуки
-
-        Scanner scanner = new Scanner(System.in);
-        Map<Integer, Object> filter = new HashMap<>();
 
         System.out.println("Введите цифру, соответствующую критерию фильтрации:");
         System.out.println("1 - ОЗУ");
         System.out.println("2 - Объем ЖД");
         System.out.println("3 - Операционная система");
         System.out.println("4 - Цвет");
+        System.out.println("5 - Цена");
+        System.out.println("6 - Диагональ экрана");
+
+        Scanner scanner = new Scanner(System.in);
+        Map<Integer, Object> filter = new HashMap<>();
 
         int selectUser = scanner.nextInt();
         filter.put(selectUser, null);
 
-        if (selectUser == 1 || selectUser == 2) {
-            System.out.println("Введите минимальное значение:");
+        if (selectUser == 1 || selectUser == 2 || selectUser == 5) {
+            System.out.println("Введите максимальное значение:");
             int minVolume = scanner.nextInt();
             filter.put(selectUser, minVolume);
-        } else if (selectUser == 3 || selectUser == 4) {
+        } else if (selectUser == 3 || selectUser == 4 || selectUser == 6) {
             System.out.println("Введите значение:");
             String volume = scanner.next();
             filter.put(selectUser, volume);
@@ -108,10 +110,10 @@ class App {
         filterAndPrint(noteboks, filter);
     }
 
-    private static void filterAndPrint(Set<Notebok> noteboks, Map<Integer, Object> filter) {
+    private static void filterAndPrint(Set<Notebok> notebooks, Map<Integer, Object> filter) {
 
-        for (Notebok element : noteboks) {
-            boolean yes = true;
+        for (Notebok element : notebooks) {
+            boolean match = true;
 
             for (Map.Entry<Integer, Object> entry : filter.entrySet()) {
 
@@ -121,32 +123,46 @@ class App {
                 switch (criteriy) {
                     case 1:
                         int volRam = (int) entryValue;
-                        if (element.getRam() < volRam) {
-                            yes = false;
+                        if (element.getRam() > volRam) {
+                            match = false;
                         }
                         break;
                     case 2:
                         int volHdd = (int) entryValue;
-                        if (element.getHdd() < volHdd) {
-                            yes = false;
+                        if (element.getHdd() > volHdd) {
+                            match = false;
                         }
                         break;
                     case 3:
                         String volOS = (String) entryValue;
-                        if (!element.getOs().equals(volOS)) {
-                            yes = false;
+                       if (!element.getOs().toLowerCase().contains(volOS.toLowerCase())) {
+
+                        match = false;
                         }
                         break;
                     case 4:
                         String volColor = (String) entryValue;
-                        if (!element.getColor().equals(volColor)) {
-                            yes = false;
+                        if (!element.getColor().toLowerCase().equals(volColor.toLowerCase())) {
+                            match = false;
                         }
                         break;
+                    case 5:
+                        int volPrice = (int) entryValue;
+                        if (element.getPrice() > volPrice) {
+                            match = false;
+                        }
+                        break;
+                    case 6:
+                        double volDiag = (double) entryValue;
+                        if (element.getDiag() < volDiag) {
+                            match = false;
+                        }
+                        break;
+
                 }
             }
 
-            if (yes) {
+            if (match) {
                 System.out.println(element);
             }
         }
